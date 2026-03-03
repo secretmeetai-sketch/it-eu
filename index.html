@@ -1,31 +1,72 @@
 <!DOCTYPE html>
-<html lang="uk">
+<html lang="it">
 <head>
   <meta charset="UTF-8">
-  <title>Web Push Demo</title>
+  <title>Demo Notifiche Push</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #f2f2f7;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .box {
+      text-align: center;
+    }
+    button {
+      margin-top: 14px;
+      font-size: 16px;
+      padding: 12px 22px;
+      border: none;
+      border-radius: 12px;
+      background: #007aff;
+      color: white;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
 
-<h2>Web Push Demo</h2>
-<button id="btn">Показати push</button>
+<div class="box">
+  <h2>Demo Notifiche Push</h2>
+  <p>PayPal • avvio tra 5 sec • 10 notifiche • EUR</p>
+  <button onclick="startPushes()">Avvia notifiche</button>
+</div>
 
 <script>
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js');
 }
 
-document.getElementById('btn').onclick = async () => {
+async function startPushes() {
   const permission = await Notification.requestPermission();
   if (permission !== 'granted') return;
 
   const reg = await navigator.serviceWorker.ready;
-  reg.showNotification("💰 Playful Rewards", {
-    body: "You received $28 USD - for playing games",
-    icon: "icon.png"
-  });
-};
+
+  const amounts = [
+    "€35", "€60", "€55", "€70", "€125",
+    "€130", "€35", "€240", "€45", "€50"
+  ];
+
+  // ⏳ avvio dopo 5 secondi
+  setTimeout(() => {
+    amounts.forEach((amount, index) => {
+      setTimeout(() => {
+        reg.showNotification("FreeCash", {
+          body: `Hai ricevuto un nuovo pagamento di ${amount} da Mes Comptes BNP Paribas`,
+          icon: "icon.png"
+        });
+      }, index * 1000); // 1 sec tra le notifiche
+    });
+  }, 5000);
+}
 </script>
 
 </body>
